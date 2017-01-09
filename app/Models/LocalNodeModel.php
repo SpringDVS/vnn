@@ -207,4 +207,13 @@ implements LocalNodeInterface
 		
 		return $this->cacheNodeId;
 	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * @see \SpringDvs\Core\LocalNodeInterface::primary()
+	 */
+	public function primary() {
+		return [];
+	}
 }
