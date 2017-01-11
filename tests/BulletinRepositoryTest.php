@@ -1,14 +1,9 @@
 <?php
 
-
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-
 class BulletinRepositoryTest extends TestCase
 {
 	/**
-	 * @var \SpringDvs\Core\NetServices\BulletinRepositoryInterface The bulletin repository
+	 * @var \SpringDvs\Core\NetServices\BulletinManagerInterface The bulletin repository
 	 */
 	private $repo;
 	
@@ -30,7 +25,7 @@ class BulletinRepositoryTest extends TestCase
 				['uid' => 1, 'nodeid' => $this->nodeId]
 				);
 		 
-		$this->repo = $this->app->make('SpringDvs\Core\NetServices\BulletinRepositoryInterface');
+		$this->repo = $this->app->make('SpringDvs\Core\NetServices\BulletinManagerInterface');
 		 
 		$_SERVER['HTTP_HOST'] = 'section9';
 	}

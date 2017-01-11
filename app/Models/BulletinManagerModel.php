@@ -3,8 +3,9 @@ namespace App\Models;
 
 use \Illuminate\Database\ConnectionInterface as Connection;
 use \SpringDvs\Core\NetServices\Bulletin as Bulletin;
-class BulletinRepositoryModel
-implements \SpringDvs\Core\NetServices\BulletinRepositoryInterface
+
+class BulletinManagerModel
+implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 {
 	/**
 	 * Database
@@ -25,7 +26,7 @@ implements \SpringDvs\Core\NetServices\BulletinRepositoryInterface
 	
 	/*
 	 * {@inheritDoc}
-	 * @see \SpringDvs\Core\NetServices\BulletinRepository::withFilters()
+	 * @see \SpringDvs\Core\NetServices\BulletinManagerInterface::withFilters()
 	 *
 	 * @return \SpringDvs\Core\NetServices\BulletinHeader[] Array of bulletin headers
 	 */
@@ -43,7 +44,7 @@ implements \SpringDvs\Core\NetServices\BulletinRepositoryInterface
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \SpringDvs\Core\NetServices\BulletinRepository::withUid()
+	 * @see \SpringDvs\Core\NetServices\BulletinManagerInterface::withUid()
 	 *
 	 * @return \SpringDvs\Core\NetServices\Bulletin|null Bulletin if found or null if invalid UID
 	 */
@@ -77,7 +78,7 @@ implements \SpringDvs\Core\NetServices\BulletinRepositoryInterface
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \SpringDvs\Core\NetServices\BulletinRepository::addBulletin()
+	 * @see \SpringDvs\Core\NetServices\BulletinManagerInterface::addBulletin()
 	 */
 	public function addBulletin(\SpringDvs\Core\NetServices\Bulletin $bulletin) {
 		$this->db->beginTransaction();
@@ -108,7 +109,7 @@ implements \SpringDvs\Core\NetServices\BulletinRepositoryInterface
 
 	/**
 	 * {@inheritDoc}
-	 * @see \SpringDvs\Core\NetServices\BulletinRepository::removeBulletin()
+	 * @see \SpringDvs\Core\NetServices\BulletinManagerInterface::removeBulletin()
 	 */
 	public function removeBulletin($uid) {
 		$this->db->beginTransaction();
