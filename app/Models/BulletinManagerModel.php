@@ -1,29 +1,14 @@
 <?php
 namespace App\Models;
 
-use \Illuminate\Database\ConnectionInterface as Connection;
 use \SpringDvs\Core\NetServices\Bulletin as Bulletin;
+use SpringDvs\Core\NetServices\BulletinManagerInterface;
 
 class BulletinManagerModel
-implements \SpringDvs\Core\NetServices\BulletinManagerInterface
+extends NodeDbModel
+implements BulletinManagerInterface
 {
-	/**
-	 * Database
-	 * @var \Illuminate\Database\ConnectionInterface
-	 */
-	private $db;
 
-	/**
-	 * @var \SpringDvs\Core\LocalNodeInterface The node model
-	 */
-	private $node;
-	
-	public function __construct(Connection $connection, \SpringDvs\Core\LocalNodeInterface $nodeModel)
-	{
-		$this->db = $connection;
-		$this->node = $nodeModel;
-	}
-	
 	/*
 	 * {@inheritDoc}
 	 * @see \SpringDvs\Core\NetServices\BulletinManagerInterface::withFilters()
@@ -45,10 +30,10 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 	/**
 	 * {@inheritDoc}
 	 * @see \SpringDvs\Core\NetServices\BulletinManagerInterface::withUid()
-	 *
+	 * 
 	 * @return \SpringDvs\Core\NetServices\Bulletin|null Bulletin if found or null if invalid UID
 	 */
-	public function withUid($uid)
+	public function withUid($uid, $attributes = [])
 	{
 		$result = $this->db->table('nsbulletins')
 					->select('nsbulletins.id',
@@ -61,7 +46,7 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 					->join('nsbulletin_post_cats', 'nsbulletin_post_cats.postid', '=', 'nsbulletins.id')
 					->join('nsbulletin_categories', 'nsbulletin_post_cats.catid', '=', 'nsbulletin_categories.id')
 					->where('nsbulletins.id', '=', $uid)
-					->where('nsbulletins.nodeid', '=', $this->node->nodeid())
+					->where('nsbulletins.nodeid', '=', $this->localNode->nodeid())
 					->first();
 					
 					
@@ -87,7 +72,7 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 					->insertGetId([
 							'title' => $bulletin->title(),
 							'content' => $bulletin->content(),
-							'nodeid' => $this->node->nodeid()
+							'nodeid' => $this->localNode->nodeid()
 							//,'created' => time()
 					]);
 
@@ -116,7 +101,7 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 		
 		$r = $this->db->table('nsbulletins')
 						->where([['id', '=', $uid],
-								 ['nodeid', '=', $this->node->nodeid()]])
+								 ['nodeid', '=', $this->localNode->nodeid()]])
 						->delete();
 						
 		if(!$r){ $this->db->commit(); return false; }
@@ -140,14 +125,14 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 		$id = $this->db->table('nsbulletin_tags')
 				->where([
 					['tag', '=', $tag],
-					['nodeid', '=', $this->node->nodeid()]
+					['nodeid', '=', $this->localNode->nodeid()]
 				])
 				->value('id');
 		
 		if($id) return $id;
 		
 		return $this->db->table('nsbulletin_tags')
-					->insertGetId(['tag' => $tag, 'nodeid' => $this->node->nodeid()]);
+					->insertGetId(['tag' => $tag, 'nodeid' => $this->localNode->nodeid()]);
 	}
 	
 	/**
@@ -163,14 +148,14 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 		$id = $this->db->table('nsbulletin_categories')
 				->where([
 					['category', '=', $cat],
-					['nodeid', '=', $this->node->nodeid()]
+					['nodeid', '=', $this->localNode->nodeid()]
 					])
 				->value('id');
 	
 		if($id) return $id;
 	
 		return $this->db->table('nsbulletin_categories')
-			->insertGetId(['category' => $cat, 'nodeid' => $this->node->nodeid()]);
+			->insertGetId(['category' => $cat, 'nodeid' => $this->localNode->nodeid()]);
 	}
 	
 	/**
@@ -227,7 +212,7 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 								 ) as categories'
 									)
 							)
-					->where('nsb.nodeid', '=', $this->node->nodeid())
+					->where('nsb.nodeid', '=', $this->localNode->nodeid())
 					->orderBy('nsb.id', 'desc')
 					->limit($limit);
 
@@ -291,7 +276,7 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 					if(!$categoryBranch) {
 						// There is no category branch so we just filter by
 						// the node id here
-						$q->where('nsbt.nodeid', '=', $this->node->nodeid());
+						$q->where('nsbt.nodeid', '=', $this->localNode->nodeid());
 					}
 				}
 				
@@ -315,12 +300,12 @@ implements \SpringDvs\Core\NetServices\BulletinManagerInterface
 						$wheres[] = ['nsbc.category', '=', trim($cat), 'or'];
 					}
 					$q->where($wheres);
-					$q->where('nsbc.nodeid', '=', $this->node->nodeid());
+					$q->where('nsbc.nodeid', '=', $this->localNode->nodeid());
 	
 				}
 				
 				// Make doubley sure that the bulletin is made by the node
-				$q->where('nsb.nodeid', '=', $this->node->nodeid());
+				$q->where('nsb.nodeid', '=', $this->localNode->nodeid());
 		
 				foreach($q->get() as $result) {
 					$bulletins[] = new Bulletin(

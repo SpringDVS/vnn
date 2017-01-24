@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SpringNodeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,13 +17,16 @@ Route::get('/', function () {
     return view('vnode');
 });
 
-Route::get('/virt/local/vn1/spring/', function () {
-	return view('vn1');
+Route::any('/virt/{regional}/{spring}/spring/', 'SpringNodeController@spring');
+
+Route::get('/frame/', function () {
+		return view('frame');
 });
 
-Route::post('/virt/local/vn1/spring/', function () {
-	return view('vn1');
+Route::get('/frame/api/', function () {
+		return view('frame_api');
 });
+	
 
 Route::get('/dash/', 'DashboardController@overview');
 Route::get('/bulletin/', 'BulletinController@overview');
