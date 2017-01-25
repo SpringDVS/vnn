@@ -1,2 +1,1 @@
-Bulletin Test
-{{ $bulletin->title() }};
+{{ $bulletin->content() }}

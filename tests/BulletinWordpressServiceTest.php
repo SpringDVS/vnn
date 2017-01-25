@@ -65,7 +65,7 @@ class BulletinWordpressServiceTest extends TestCase
     	$this->configThinService($this->serviceConfig());
     	$uid = base64_encode("http://mainline.wp/?p=6");
     	
-    	$this->mockRequst("service spring://alpha.venus.uk/bulletin/post/$uid?view=web response:stripped");
+    	$this->mockRequst("service spring://alpha.venus.uk/bulletin/post/$uid?view=test response:stripped");
     	 
     	$response = $this->controller->spring('venus', 'alpha', $this->request);
     
