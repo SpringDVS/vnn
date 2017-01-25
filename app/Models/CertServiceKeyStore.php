@@ -33,15 +33,30 @@ implements CertKeyStoreInterface
 	}
 	
 	private function get($key) {
+		if(!$this->queryBase->where('key','=',$key)->exists()) {
+			return null;
+		}
+		
 		return $this->queryBase
 			->where('key', '=', $key)
 			->value('value');
 	}
 	
 	private function set($key, $value) {
+		if(!$this->queryBase->where('key','=',$key)->exists()) {
+			return $this->queryBase
+				->insert([
+					'nodeid' => $this->localNode->nodeid(),
+					'key' => $key,
+					'value' => $value,
+					'module' => 'cert',
+				]);
+				
+		}
+		
 		return $this->queryBase
 			->where('key', '=', $key)
-			->update(['value', '=', $value]);
-		return true;
+			->update(['value' => $value]);
+		
 	}
 }

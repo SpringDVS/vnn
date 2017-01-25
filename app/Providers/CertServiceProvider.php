@@ -16,8 +16,8 @@ class CertServiceProvider extends ServiceProvider
      */
     public function register()
     {
-		$this->app->bind(\App\Models\CertServiceKeyStore::class, function($app){
-			return new CertServiceKeyStore($app->make('db.connection'), $app->make(App\Models\LocalNodeModel::class));
+		$this->app->bind(\App\Models\CertServiceKeyStore::class, function($app, $params){
+			return new CertServiceKeyStore($app->make('db.connection'), $params['localNode']);
 		});
 		
 		$this->app->bind(\SpringDvs\Core\NetServices\CertKeyStoreInterface::class,
