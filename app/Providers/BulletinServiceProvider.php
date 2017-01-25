@@ -23,7 +23,8 @@ class BulletinServiceProvider extends ServiceProvider
 		$ns->register('bulletin.wordpress', function($uriPath, $uriQuery, $localNode) use($app) {
 			$params = [
 					'manager' => ThinWordpressBulletinManager::class,
-					'localNode' => $localNode
+					'localNode' => $localNode,
+					'source' => 'web',
 			];
 		
 			/**
@@ -56,9 +57,11 @@ class BulletinServiceProvider extends ServiceProvider
 		);
 		
 		$this->app->bind(\SpringDvs\Core\NetServices\Impl\CciBulletinService::class, function($app, $params) {
+			$source = isset($params['source']) ? $params['source'] : 'spring';
+			
 			return new CciBulletinService($this->app->make($params['manager'],$params),
 										  $this->app->make(NetServiceViewLoaderInterface::class),
-										  $params['localNode']);
+										  $params['localNode'], $source);
 		});
 
 		$this->app->bind(\App\Models\ThinWordpressBulletinManager::class, function($app, $params){

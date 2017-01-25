@@ -1,0 +1,2 @@
+Bulletin Test
+{{ $bulletin->title() }};

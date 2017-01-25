@@ -56,7 +56,20 @@ class BulletinWordpressServiceTest extends TestCase
 
     	foreach($headers as $index => $header) {
     		$this->assertEquals($titles[$index], $header['title'][0]);
+    		$this->assertEquals('web', $header['source']);
     	}
+    }
+    
+    public function testPostStrippedView()
+    {
+    	$this->configThinService($this->serviceConfig());
+    	$uid = base64_encode("http://mainline.wp/?p=6");
+    	
+    	$this->mockRequst("service spring://alpha.venus.uk/bulletin/post/$uid?view=web response:stripped");
+    	 
+    	$response = $this->controller->spring('venus', 'alpha', $this->request);
+    
+    	$this->assertEquals('http://mainline.wp/2017/01/24/this-is-an-event-post-for-springnet/', $response);
     }
 
     private function configThinService($config = null) {

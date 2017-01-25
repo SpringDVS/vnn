@@ -25,6 +25,6 @@ implements NetServiceViewLoaderInterface{
 			return "";
 		}
 
-		$this->viewFactory->make($name, $data)->render();
+		return $this->viewFactory->make($name, $data)->render();
 	}
 }

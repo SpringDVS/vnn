@@ -54,7 +54,7 @@ implements BulletinManagerServiceInterface {
 	 * @see \SpringDvs\Core\NetServices\BulletinManagerServiceInterface::withUid()
 	 */
 	public function withUid($uid, $attributes = []) {
-		$url = $uid . '&feed=rss2';
+		$url = base64_decode($uid) . '&feed=rss2';
 		return $this->feedToBulletin($url, $uid);		
 	}
 	
@@ -94,7 +94,7 @@ implements BulletinManagerServiceInterface {
 		}
 		
 		foreach($feed->channel->item as $post) {
-			$posts[] = new Bulletin($post->guid, $post->title, [], []);
+			$posts[] = new Bulletin(base64_encode($post->guid), $post->title, [], []);
 			if(--$limit == 0){ break; }
 		}
 		return $posts;
