@@ -1,5 +1,5 @@
 <?php
-
+require_once('MessageDecoder.php');
 abstract class TestCase extends Illuminate\Foundation\Testing\TestCase
 {
     /**

@@ -7,10 +7,33 @@ use App\Models\BulletinManagerModel;
 use SpringDvs\Core\NetServices\Impl\CciBulletinService;
 use App\Models\ThinWordpressBulletinManager;
 use App\Models\ThinServices;
+use SpringDvs\Core\NetServiceHandler;
+use SpringDvs\Core\NetServiceViewLoaderInterface;
 
 class BulletinServiceProvider extends ServiceProvider
 {
 
+	public function boot() {
+		/**
+		 * @var NetServiceHandler $ns
+		 */
+		$ns = $this->app->make(NetServiceHandler::class);
+		$app = $this->app;
+		
+		$ns->register('bulletin.wordpress', function($uriPath, $uriQuery, $localNode) use($app) {
+			$params = [
+					'manager' => ThinWordpressBulletinManager::class,
+					'localNode' => $localNode
+			];
+		
+			/**
+			 * @var NetServiceInterface $service
+			 */
+			$service = $app->make(CciBulletinService::class, $params);
+		
+			return $service->run($uriPath, $uriQuery);
+		});
+	}
     /**
      * Register the Bulletin network service.
      *
@@ -18,8 +41,8 @@ class BulletinServiceProvider extends ServiceProvider
      */
     public function register()
     {
-		$this->app->bind(\App\Models\BulletinManagerModel::class, function($app){
-			return new BulletinManagerModel($app->make('db.connection'), $app->make(App\Models\LocalNodeModel::class));
+		$this->app->bind(\App\Models\BulletinManagerModel::class, function($app, $params){
+			return new BulletinManagerModel($app->make('db.connection'), $params['localNode']);
 		});
 		
 		$this->app->bind(
@@ -32,14 +55,14 @@ class BulletinServiceProvider extends ServiceProvider
 			\App\Models\BulletinManagerModel::class
 		);
 		
-		$this->app->bind(\SpringDvs\Core\NetServices\Impl\CciBulletinService::class, function($app) {
-			return new CciBulletinService($app->make(SpringDvs\Core\NetServices\BulletinManagerServiceInterface::class),
-										  $app->make(SpringDvs\Core\LocalNodeInterface::class));
+		$this->app->bind(\SpringDvs\Core\NetServices\Impl\CciBulletinService::class, function($app, $params) {
+			return new CciBulletinService($this->app->make($params['manager'],$params),
+										  $this->app->make(NetServiceViewLoaderInterface::class),
+										  $params['localNode']);
 		});
 
-		$this->app->bind(\App\Models\ThinWordpressBulletinManager::class, function($app){
-			return new ThinWordpressBulletinManager($app->make(ThinServices::class), $app->make(App\Models\LocalNodeModel::class));
-		});
-			
+		$this->app->bind(\App\Models\ThinWordpressBulletinManager::class, function($app, $params){
+			return new ThinWordpressBulletinManager($app->make(ThinServices::class), $params['localNode']);
+		});			
     }
 }

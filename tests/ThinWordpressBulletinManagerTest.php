@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\ThinWordpressBulletinManager;
 use App\Models\ThinServices;
 use SpringDvs\Core\NetServices\BulletinHeader;
+use SpringDvs\Core\LocalNodeInterface;
 
 class ThinWordpressBulletinManagerTest extends TestCase
 {
@@ -167,6 +168,7 @@ class ThinWordpressBulletinManagerTest extends TestCase
     	$this->thinService->setConfig('bulletin', $this->nodeId, (object)[
     			'feedUri' => 'http://mainline.wp', 'categoryBase' => 'SpringNet'
     	]);
-    	$this->service = $this->app->make(ThinWordpressBulletinManager::class);
+    	$this->service = $this->app->make(ThinWordpressBulletinManager::class,
+    									['localNode' => $this->app->make(LocalNodeInterface::class)]);
     }
 }

@@ -31,8 +31,6 @@ class LocalNodeLookupTest extends TestCase
 				['uid' => 1, 'nodeid' => $this->nodeId]
 				);
 			
-		$this->repo = $this->app->make('SpringDvs\Core\NetServices\BulletinManagerInterface');
-			
 		$_SERVER['HTTP_HOST'] = 'section9';
 		$this->lookup = $this->app->make(LocalNodeLookup::class);
 	}

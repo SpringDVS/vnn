@@ -1,5 +1,7 @@
 <?php
 
+use SpringDvs\Core\LocalNodeInterface;
+
 class BulletinRepositoryTest extends TestCase
 {
 	/**
@@ -25,7 +27,8 @@ class BulletinRepositoryTest extends TestCase
 				['uid' => 1, 'nodeid' => $this->nodeId]
 				);
 		 
-		$this->repo = $this->app->make('SpringDvs\Core\NetServices\BulletinManagerInterface');
+		$this->repo = $this->app->make('SpringDvs\Core\NetServices\BulletinManagerInterface',
+						['localNode' => $this->app->make(LocalNodeInterface::class)]);
 		 
 		$_SERVER['HTTP_HOST'] = 'section9';
 	}
